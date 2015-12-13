@@ -14,4 +14,9 @@ An app that allows users to discover the most popular movies playing.
 * In the request for a key, you have to state that our usage will be for educational/non-commercial use. You also need to provide some personal information to complete the request. Once you submit the request, you should receive your key via email shortly after.
 
 
+## Libraries Used 
+
+* [Picasso](http://square.github.io/picasso/) A powerful library that handles image loading and caching in the app
+
+
 
