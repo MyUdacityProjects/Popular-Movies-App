@@ -6,9 +6,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +33,33 @@ public class MainActivityFragment extends Fragment {
 
     public MovieAdapter mMovieAdapter;
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main_fragment, menu);
+    }
+
     public MainActivityFragment() {
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        String sort_order;
+        switch (item.getItemId()){
+            case R.id.action_sort_popular:
+                sort_order = "popularity.desc";
+                new FetchMovies().execute(sort_order);
+                return  true;
+            case R.id.action_sort_rating:
+                sort_order = "vote_average.desc";
+                new FetchMovies().execute(sort_order);
+                return  true;
+            default:
+                return true;
+        }
     }
 
     @Override
@@ -41,18 +74,19 @@ public class MainActivityFragment extends Fragment {
         GridView movieGrid = (GridView)rootView.findViewById(R.id.movie_grid);
         movieGrid.setAdapter(mMovieAdapter);
         FetchMovies fetchMovies = new FetchMovies();
-        fetchMovies.execute();
+        fetchMovies.execute("popularity.desc");
         return rootView;
     }
 
-    public class FetchMovies extends AsyncTask<Void, Void, List<Movie>> {
+    public class FetchMovies extends AsyncTask<String, Void, List<Movie>> {
         @Override
-        protected List<Movie> doInBackground(Void... params) {
+        protected List<Movie> doInBackground(String... params) {
             HttpURLConnection httpURLConnection = null;
             BufferedReader bufferedReader = null;
 
             String responseJSONStr = null;
             List<Movie> moviesList = null;
+            String sort_order = params[0];
 
             try {
 
@@ -61,7 +95,7 @@ public class MainActivityFragment extends Fragment {
                 final String APPKEY_QUERY_PARAM = "api_key";
 
                 Uri uri = Uri.parse(BASE_URL).buildUpon().
-                        appendQueryParameter(SORT_QUERY_PARAM, "popularity.desc").
+                        appendQueryParameter(SORT_QUERY_PARAM, sort_order).
                         appendQueryParameter(APPKEY_QUERY_PARAM, BuildConfig.THE_MOVIEDB_API_KEY).build();
 
                 String requestURL = uri.toString();
@@ -131,14 +165,29 @@ public class MainActivityFragment extends Fragment {
             }
         }
 
-        private List<Movie> getMovieDataFromJson(String jsonResponse){
+        private List<Movie> getMovieDataFromJson(String jsonResponse) throws Exception{
             List<Movie> movies = new ArrayList<>();
-            movies.add(new Movie("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"));
-            movies.add(new Movie("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"));
-            movies.add(new Movie("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"));
-            movies.add(new Movie("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"));
-            movies.add(new Movie("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"));
-            movies.add(new Movie("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg"));
+            final String RESULTS_KEY = "results";
+            final String POSTER_PATH = "poster_path";
+            try{
+                JSONObject movieJSON = new JSONObject(jsonResponse);
+                if(movieJSON.has(RESULTS_KEY)){
+                    JSONArray movieList = movieJSON.getJSONArray(RESULTS_KEY);
+                    if(movieList.length() > 0){
+                        for(int i = 0; i < movieList.length(); i++) {
+                            JSONObject movie = (JSONObject)movieList.get(i);
+                            if(movie.has(POSTER_PATH)){
+                                String posterPath = movie.getString(POSTER_PATH);
+                                movies.add(new Movie(posterPath));
+                            }
+
+                        }
+                    }
+                }
+            }catch (Exception e){
+                Toast.makeText(getActivity(),"Error in JSON",Toast.LENGTH_SHORT).show();
+            }
+
             return  movies;
         }
     }
