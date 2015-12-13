@@ -80,9 +80,8 @@ public class MainActivityFragment extends Fragment {
         movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getActivity(),movies.get(position).getMovieId(),Toast.LENGTH_SHORT).show();
                 Intent detailActivity = new Intent(getActivity(),DetailActivity.class);
-                detailActivity.putExtra("MOVIE_ID",movies.get(position).getMovieId());
+                detailActivity.putExtra("MOVIE",movies.get(position));
                 startActivity(detailActivity);
             }
         });
@@ -195,10 +194,10 @@ public class MainActivityFragment extends Fragment {
             final String RESULTS_KEY = "results";
             final String POSTER_PATH = "poster_path";
             final String MOVIE_ID = "id";
-            /*final String MOVIE_TITLE = "originalTitle";
+            final String MOVIE_TITLE = "original_title";
             final String MOVIE_OVERVIEW = "overview";
             final String MOVIE_RATING = "vote_average";
-            final String MOVIE_RELEASE_DATE = "release_date";*/
+            final String MOVIE_RELEASE_DATE = "release_date";
 
 
             try{
@@ -212,7 +211,18 @@ public class MainActivityFragment extends Fragment {
                                 String posterPath = movieDetailJSON.getString(POSTER_PATH);
                                 String movieID = movieDetailJSON.getString(MOVIE_ID);
                                 Movie movie = new Movie(movieID,posterPath);
-
+                                if(movieDetailJSON.has(MOVIE_TITLE)){
+                                    movie.setOriginalTitle(movieDetailJSON.getString(MOVIE_TITLE));
+                                }
+                                if(movieDetailJSON.has(MOVIE_OVERVIEW)){
+                                    movie.setOverview(movieDetailJSON.getString(MOVIE_OVERVIEW));
+                                }
+                                if(movieDetailJSON.has(MOVIE_RATING)){
+                                    movie.setVoteAverage(movieDetailJSON.getString(MOVIE_RATING));
+                                }
+                                if(movieDetailJSON.has(MOVIE_RELEASE_DATE)){
+                                    movie.setReleaseDate(movieDetailJSON.getString(MOVIE_RELEASE_DATE));
+                                }
                                 movies.add(movie);
                             }
 
