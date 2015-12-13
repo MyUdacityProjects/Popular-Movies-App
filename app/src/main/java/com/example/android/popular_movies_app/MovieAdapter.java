@@ -28,7 +28,8 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         }
 
         ImageView moviePoster = (ImageView) convertView.findViewById(R.id.movie_poster);
-        Picasso.with(getContext()).load(movie.getImageFullURL()).into(moviePoster);
+        Picasso.with(getContext()).load(movie.getImageFullURL()).placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder).into(moviePoster);
 
         return convertView;
     }

@@ -5,4 +5,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="sort_most_popular">Sort by Most Popular</string>
     <string name="sort_rating">Sort by Rating</string>
+    <string name="title_activity_detail">DetailActivity</string>
 </resources>

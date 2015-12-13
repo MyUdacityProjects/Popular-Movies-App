@@ -1,5 +1,7 @@
 package com.example.android.popular_movies_app;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -67,18 +70,37 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        List<Movie> movies = new ArrayList<>();
+        final List<Movie> movies = new ArrayList<>();
 
         mMovieAdapter = new MovieAdapter(getActivity(),movies);
 
         GridView movieGrid = (GridView)rootView.findViewById(R.id.movie_grid);
         movieGrid.setAdapter(mMovieAdapter);
+
+        movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getActivity(),movies.get(position).getMovieId(),Toast.LENGTH_SHORT).show();
+                Intent detailActivity = new Intent(getActivity(),DetailActivity.class);
+                detailActivity.putExtra("MOVIE_ID",movies.get(position).getMovieId());
+                startActivity(detailActivity);
+            }
+        });
         FetchMovies fetchMovies = new FetchMovies();
         fetchMovies.execute("popularity.desc");
         return rootView;
     }
 
     public class FetchMovies extends AsyncTask<String, Void, List<Movie>> {
+        private ProgressDialog dialog = new ProgressDialog(getActivity());
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            this.dialog.setMessage("Please wait");
+            this.dialog.show();
+        }
+
         @Override
         protected List<Movie> doInBackground(String... params) {
             HttpURLConnection httpURLConnection = null;
@@ -159,6 +181,9 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Movie> movies) {
             super.onPostExecute(movies);
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
             mMovieAdapter.clear();
             for (Movie movie : movies){
                 mMovieAdapter.add(movie);
@@ -169,16 +194,26 @@ public class MainActivityFragment extends Fragment {
             List<Movie> movies = new ArrayList<>();
             final String RESULTS_KEY = "results";
             final String POSTER_PATH = "poster_path";
+            final String MOVIE_ID = "id";
+            /*final String MOVIE_TITLE = "originalTitle";
+            final String MOVIE_OVERVIEW = "overview";
+            final String MOVIE_RATING = "vote_average";
+            final String MOVIE_RELEASE_DATE = "release_date";*/
+
+
             try{
                 JSONObject movieJSON = new JSONObject(jsonResponse);
                 if(movieJSON.has(RESULTS_KEY)){
                     JSONArray movieList = movieJSON.getJSONArray(RESULTS_KEY);
                     if(movieList.length() > 0){
                         for(int i = 0; i < movieList.length(); i++) {
-                            JSONObject movie = (JSONObject)movieList.get(i);
-                            if(movie.has(POSTER_PATH)){
-                                String posterPath = movie.getString(POSTER_PATH);
-                                movies.add(new Movie(posterPath));
+                            JSONObject movieDetailJSON = (JSONObject)movieList.get(i);
+                            if(movieDetailJSON.has(POSTER_PATH) && movieDetailJSON.has(MOVIE_ID)){
+                                String posterPath = movieDetailJSON.getString(POSTER_PATH);
+                                String movieID = movieDetailJSON.getString(MOVIE_ID);
+                                Movie movie = new Movie(movieID,posterPath);
+
+                                movies.add(movie);
                             }
 
                         }
