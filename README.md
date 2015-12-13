@@ -16,7 +16,7 @@ An app that allows users to discover the most popular movies playing.
 
 ## Libraries Used 
 
-* [Picasso](http://square.github.io/picasso/) A powerful library that handles image loading and caching in the app
+* [Picasso](http://square.github.io/picasso/) - A powerful library that handles image loading and caching in the app
 
 
 
