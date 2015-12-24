@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +37,8 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     public MovieAdapter mMovieAdapter;
+    public static String SORT_POPULARITY = "popularity.desc";
+    public static String SORT_RATING = "vote_average.desc";
 
 
     @Override
@@ -56,15 +57,13 @@ public class MainActivityFragment extends Fragment {
         String sort_order;
         switch (item.getItemId()) {
             case R.id.action_sort_popular:
-                sort_order = "popularity.desc";
                 if (isOnline()) {
-                    new FetchMovies().execute(sort_order);
+                    new FetchMovies().execute(SORT_POPULARITY);
                 }
                 return true;
             case R.id.action_sort_rating:
-                sort_order = "vote_average.desc";
                 if (isOnline()) {
-                    new FetchMovies().execute(sort_order);
+                    new FetchMovies().execute(SORT_RATING);
                 }
                 return true;
             default:
@@ -94,7 +93,7 @@ public class MainActivityFragment extends Fragment {
         });
         if (isOnline()) {
             FetchMovies fetchMovies = new FetchMovies();
-            fetchMovies.execute("popularity.desc");
+            fetchMovies.execute(SORT_POPULARITY);
         }
         return rootView;
     }
@@ -169,7 +168,6 @@ public class MainActivityFragment extends Fragment {
 
 
             } catch (Exception e) {
-                Log.e("Fetch Error", "Error ", e);
                 return moviesList;
 
             } finally {
@@ -180,14 +178,12 @@ public class MainActivityFragment extends Fragment {
                     try {
                         bufferedReader.close();
                     } catch (final IOException e) {
-                        Log.e("Fetch Error", "Error closing stream", e);
                         return moviesList;
                     }
                 }
                 try {
                     moviesList = getMovieDataFromJson(responseJSONStr);
                 } catch (Exception e) {
-                    Log.e("FORECAST FRAGMENT", "Error parsing JSON", e);
                     return moviesList;
                 }
 
