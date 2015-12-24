@@ -124,7 +124,7 @@ public class MainActivityFragment extends Fragment {
             BufferedReader bufferedReader = null;
 
             String responseJSONStr = null;
-            List<Movie> moviesList = null;
+            List<Movie> moviesList = new ArrayList<>();
             String sort_order = params[0];
 
             try {
@@ -162,7 +162,7 @@ public class MainActivityFragment extends Fragment {
                 }
                 if (buffer.length() == 0) {
                     // Stream was empty.  No point in parsing.
-                    return null;
+                    return moviesList;
                 }
                 responseJSONStr = buffer.toString();
 
