@@ -1,7 +1,10 @@
 package com.example.android.popular_movies_app;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -51,15 +54,19 @@ public class MainActivityFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         String sort_order;
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_sort_popular:
                 sort_order = "popularity.desc";
-                new FetchMovies().execute(sort_order);
-                return  true;
+                if (isOnline()) {
+                    new FetchMovies().execute(sort_order);
+                }
+                return true;
             case R.id.action_sort_rating:
                 sort_order = "vote_average.desc";
-                new FetchMovies().execute(sort_order);
-                return  true;
+                if (isOnline()) {
+                    new FetchMovies().execute(sort_order);
+                }
+                return true;
             default:
                 return true;
         }
@@ -72,22 +79,34 @@ public class MainActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final List<Movie> movies = new ArrayList<>();
 
-        mMovieAdapter = new MovieAdapter(getActivity(),movies);
+        mMovieAdapter = new MovieAdapter(getActivity(), movies);
 
-        GridView movieGrid = (GridView)rootView.findViewById(R.id.movie_grid);
+        GridView movieGrid = (GridView) rootView.findViewById(R.id.movie_grid);
         movieGrid.setAdapter(mMovieAdapter);
 
         movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent detailActivity = new Intent(getActivity(),DetailActivity.class);
-                detailActivity.putExtra("MOVIE",movies.get(position));
+                Intent detailActivity = new Intent(getActivity(), DetailActivity.class);
+                detailActivity.putExtra("MOVIE", movies.get(position));
                 startActivity(detailActivity);
             }
         });
-        FetchMovies fetchMovies = new FetchMovies();
-        fetchMovies.execute("popularity.desc");
+        if (isOnline()) {
+            FetchMovies fetchMovies = new FetchMovies();
+            fetchMovies.execute("popularity.desc");
+        }
         return rootView;
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()) {
+            Toast.makeText(getContext(), "Please make sure you are connected to internet", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     public class FetchMovies extends AsyncTask<String, Void, List<Movie>> {
@@ -184,12 +203,12 @@ public class MainActivityFragment extends Fragment {
                 dialog.dismiss();
             }
             mMovieAdapter.clear();
-            for (Movie movie : movies){
+            for (Movie movie : movies) {
                 mMovieAdapter.add(movie);
             }
         }
 
-        private List<Movie> getMovieDataFromJson(String jsonResponse) throws Exception{
+        private List<Movie> getMovieDataFromJson(String jsonResponse) throws Exception {
             List<Movie> movies = new ArrayList<>();
             final String RESULTS_KEY = "results";
             final String POSTER_PATH = "poster_path";
@@ -200,27 +219,27 @@ public class MainActivityFragment extends Fragment {
             final String MOVIE_RELEASE_DATE = "release_date";
 
 
-            try{
+            try {
                 JSONObject movieJSON = new JSONObject(jsonResponse);
-                if(movieJSON.has(RESULTS_KEY)){
+                if (movieJSON.has(RESULTS_KEY)) {
                     JSONArray movieList = movieJSON.getJSONArray(RESULTS_KEY);
-                    if(movieList.length() > 0){
-                        for(int i = 0; i < movieList.length(); i++) {
-                            JSONObject movieDetailJSON = (JSONObject)movieList.get(i);
-                            if(movieDetailJSON.has(POSTER_PATH) && movieDetailJSON.has(MOVIE_ID)){
+                    if (movieList.length() > 0) {
+                        for (int i = 0; i < movieList.length(); i++) {
+                            JSONObject movieDetailJSON = (JSONObject) movieList.get(i);
+                            if (movieDetailJSON.has(POSTER_PATH) && movieDetailJSON.has(MOVIE_ID)) {
                                 String posterPath = movieDetailJSON.getString(POSTER_PATH);
                                 String movieID = movieDetailJSON.getString(MOVIE_ID);
-                                Movie movie = new Movie(movieID,posterPath);
-                                if(movieDetailJSON.has(MOVIE_TITLE)){
+                                Movie movie = new Movie(movieID, posterPath);
+                                if (movieDetailJSON.has(MOVIE_TITLE)) {
                                     movie.setOriginalTitle(movieDetailJSON.getString(MOVIE_TITLE));
                                 }
-                                if(movieDetailJSON.has(MOVIE_OVERVIEW)){
+                                if (movieDetailJSON.has(MOVIE_OVERVIEW)) {
                                     movie.setOverview(movieDetailJSON.getString(MOVIE_OVERVIEW));
                                 }
-                                if(movieDetailJSON.has(MOVIE_RATING)){
+                                if (movieDetailJSON.has(MOVIE_RATING)) {
                                     movie.setVoteAverage(movieDetailJSON.getString(MOVIE_RATING));
                                 }
-                                if(movieDetailJSON.has(MOVIE_RELEASE_DATE)){
+                                if (movieDetailJSON.has(MOVIE_RELEASE_DATE)) {
                                     movie.setReleaseDate(movieDetailJSON.getString(MOVIE_RELEASE_DATE));
                                 }
                                 movies.add(movie);
@@ -229,11 +248,11 @@ public class MainActivityFragment extends Fragment {
                         }
                     }
                 }
-            }catch (Exception e){
-                Toast.makeText(getActivity(),"Error in JSON",Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), "Error in JSON", Toast.LENGTH_SHORT).show();
             }
 
-            return  movies;
+            return movies;
         }
     }
 }
