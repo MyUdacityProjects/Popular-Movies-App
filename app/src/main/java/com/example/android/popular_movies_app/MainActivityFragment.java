@@ -102,7 +102,7 @@ public class MainActivityFragment extends Fragment {
         ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo == null || !networkInfo.isConnected() || !networkInfo.isAvailable()) {
-            Toast.makeText(getContext(), "Please make sure you are connected to internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.internet_conn_msg), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -114,7 +114,7 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            this.dialog.setMessage("Please wait");
+            this.dialog.setMessage(getString(R.string.loading_msg));
             this.dialog.show();
         }
 
@@ -245,7 +245,7 @@ public class MainActivityFragment extends Fragment {
                     }
                 }
             } catch (Exception e) {
-                Toast.makeText(getActivity(), "Error in JSON", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.movie_err_msg), Toast.LENGTH_SHORT).show();
             }
 
             return movies;
