@@ -3,6 +3,10 @@ package com.example.android.popular_movies_app;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by harshita.k on 13/12/15.
  */
@@ -115,6 +119,19 @@ public class Movie implements Parcelable{
 
     public String getRating(){
         return getVoteAverage() + "/" + RATING_MAX;
+    }
+
+    public String getMovieReleaseDate() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-mm");
+        String date = "";
+        try {
+            Date newDate = format.parse(getReleaseDate());
+            format = new SimpleDateFormat("MMM dd, yyyy");
+            date = format.format(newDate);
+        } catch (ParseException e) {
+
+        }
+        return date;
     }
 
 }

@@ -9,4 +9,5 @@
     <string name="internet_conn_msg">Please make sure you are connected to internet</string>
     <string name="loading_msg">Please wait</string>
     <string name="movie_err_msg">Error in fetching movies</string>
+    <string name="poster_img_description">Poster image of the movie</string>
 </resources>

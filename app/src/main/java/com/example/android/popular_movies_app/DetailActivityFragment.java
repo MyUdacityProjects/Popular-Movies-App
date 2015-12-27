@@ -38,7 +38,7 @@ public class DetailActivityFragment extends Fragment {
             movieTitleTextView.setText(movieDetail.getOriginalTitle());
             movieOverviewTextView.setText(movieDetail.getOverview());
             movieRatingTextView.setText(movieDetail.getRating());
-            movieReleaseDateTextView.setText(movieDetail.getReleaseDate());
+            movieReleaseDateTextView.setText(movieDetail.getMovieReleaseDate());
             Picasso.with(getContext()).load(movieDetail.getImageFullURL()).placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder).into(moviePosterImageView);
         }
