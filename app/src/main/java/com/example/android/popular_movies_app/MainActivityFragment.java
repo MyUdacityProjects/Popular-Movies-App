@@ -39,7 +39,13 @@ public class MainActivityFragment extends Fragment {
     public MovieAdapter mMovieAdapter;
     public static String SORT_POPULARITY = "popularity.desc";
     public static String SORT_RATING = "vote_average.desc";
+    public ProgressDialog dialog;
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        dialog = null;
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -54,7 +60,6 @@ public class MainActivityFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        String sort_order;
         switch (item.getItemId()) {
             case R.id.action_sort_popular:
                 if (isOnline()) {
@@ -109,13 +114,16 @@ public class MainActivityFragment extends Fragment {
     }
 
     public class FetchMovies extends AsyncTask<String, Void, List<Movie>> {
-        private ProgressDialog dialog = new ProgressDialog(getActivity());
+
 
         @Override
         protected void onPreExecute() {
+            if(dialog == null){
+                dialog = new ProgressDialog(getActivity());
+                dialog.setMessage(getString(R.string.loading_msg));
+                dialog.show();
+            }
             super.onPreExecute();
-            this.dialog.setMessage(getString(R.string.loading_msg));
-            this.dialog.show();
         }
 
         @Override
@@ -195,8 +203,9 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Movie> movies) {
             super.onPostExecute(movies);
-            if (dialog.isShowing()) {
+            if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
+                dialog = null;
             }
             mMovieAdapter.clear();
             for (Movie movie : movies) {
