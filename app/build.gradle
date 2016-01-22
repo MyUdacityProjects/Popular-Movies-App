@@ -21,7 +21,14 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'THE_MOVIEDB_API_KEY', '"KEY"'
     }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE' // will not include NOTICE file
+        exclude 'META-INF/LICENSE' // will not include LICENSE file
+    }
 }
+
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -29,4 +36,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta3'
+    compile 'com.squareup.retrofit2:converter-jackson:2.0.0-beta3'
+    compile 'com.jakewharton:butterknife:7.0.1'
 }

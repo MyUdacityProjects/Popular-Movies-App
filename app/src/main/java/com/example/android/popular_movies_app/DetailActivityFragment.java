@@ -10,14 +10,30 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * A placeholder fragment containing a simple view.
  */
 public class DetailActivityFragment extends Fragment {
 
+    @Bind(R.id.movie_title)
+    TextView movieTitleTextView;
+
+    @Bind(R.id.movie_desc)
+    TextView movieOverviewTextView;
+
+    @Bind(R.id.movie_rating)
+    TextView movieRatingTextView;
+
+    @Bind(R.id.movie_release_date)
+    TextView movieReleaseDateTextView;
+
+    @Bind(R.id.movie_poster)
+    ImageView moviePosterImageView;
+
     public Movie movieDetail;
-    public TextView movieTitleTextView,movieOverviewTextView,movieRatingTextView,movieReleaseDateTextView;
-    public ImageView moviePosterImageView;
 
     public DetailActivityFragment() {
     }
@@ -27,14 +43,10 @@ public class DetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        movieTitleTextView = (TextView)rootView.findViewById(R.id.movie_title);
-        movieOverviewTextView = (TextView) rootView.findViewById(R.id.movie_desc);
-        movieRatingTextView = (TextView) rootView.findViewById(R.id.movie_rating);
-        movieReleaseDateTextView = (TextView) rootView.findViewById(R.id.movie_release_date);
-        moviePosterImageView = (ImageView) rootView.findViewById(R.id.movie_poster);
+        ButterKnife.bind(this, rootView);
 
         movieDetail = getActivity().getIntent().getExtras().getParcelable("MOVIE");
-        if(movieDetail != null){
+        if (movieDetail != null) {
             movieTitleTextView.setText(movieDetail.getOriginalTitle());
             movieOverviewTextView.setText(movieDetail.getOverview());
             movieRatingTextView.setText(movieDetail.getRating());
