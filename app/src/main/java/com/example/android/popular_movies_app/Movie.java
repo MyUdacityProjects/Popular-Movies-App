@@ -10,10 +10,7 @@ import java.util.Date;
 /**
  * Created by harshita.k on 13/12/15.
  */
-public class Movie implements Parcelable{
-    final static String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
-    final static String IMAGE_SMALL_SIZE = "w185";
-    final static String RATING_MAX = "10";
+public class Movie implements Parcelable {
     String movieId;
     String imageURL;
     String originalTitle;
@@ -114,11 +111,11 @@ public class Movie implements Parcelable{
     }
 
     public String getImageFullURL() {
-        return IMAGE_BASE_URL + IMAGE_SMALL_SIZE + getImageURL();
+        return APIConstants.IMAGE_BASE_URL + APIConstants.IMAGE_SMALL_SIZE + getImageURL();
     }
 
-    public String getRating(){
-        return getVoteAverage() + "/" + RATING_MAX;
+    public String getRating() {
+        return getVoteAverage() + "/" + APIConstants.RATING_MAX;
     }
 
     public String getMovieReleaseDate() {
