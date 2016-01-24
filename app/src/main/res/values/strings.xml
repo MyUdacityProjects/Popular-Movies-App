@@ -9,4 +9,7 @@
     <string name="loading_msg">Please wait</string>
     <string name="movie_err_msg">Error in fetching movies</string>
     <string name="poster_img_description">Poster image of the movie</string>
+    <string name="mark_favorite">Mark as favorite</string>
+    <string name="reviews">Reviews</string>
+    <string name="trailers">Trailers</string>
 </resources>
