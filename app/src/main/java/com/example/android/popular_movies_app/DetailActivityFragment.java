@@ -14,6 +14,8 @@ import com.example.android.popular_movies_app.adapters.ReviewAdapter;
 import com.example.android.popular_movies_app.models.ListResponse;
 import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.models.Review;
+import com.example.android.popular_movies_app.models.Trailer;
+import com.example.android.popular_movies_app.models.TrailersList;
 import com.example.android.popular_movies_app.services.MovieClient;
 import com.example.android.popular_movies_app.services.MovieService;
 import com.squareup.picasso.Picasso;
@@ -51,6 +53,8 @@ public class DetailActivityFragment extends Fragment {
 
     public ReviewAdapter reviewAdapter;
 
+    public MovieService movieService;
+
     public DetailActivityFragment() {
     }
 
@@ -70,7 +74,22 @@ public class DetailActivityFragment extends Fragment {
             Picasso.with(getContext()).load(movieDetail.getImageFullURL()).placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder).into(moviePosterImageView);
         }
-        MovieService movieService = MovieClient.createService(MovieService.class);
+        final List<Review> reviews = new ArrayList<>();
+
+        reviewAdapter = new ReviewAdapter(getActivity(), reviews);
+
+        ListView reviewList = (ListView) rootView.findViewById(R.id.reviewlist);
+        reviewList.setAdapter(reviewAdapter);
+
+        movieService = MovieClient.createService(MovieService.class);
+
+        fetchReviews();
+        fetchTrailers();
+
+        return rootView;
+    }
+
+    private void fetchReviews(){
         Call<ListResponse<Review>> reviewCall = movieService.getMovieReviews(movieDetail.getId());
         reviewCall.enqueue(new Callback<ListResponse<Review>>() {
             @Override
@@ -78,7 +97,7 @@ public class DetailActivityFragment extends Fragment {
                 //Toast.makeText(getActivity(), "Yayee", Toast.LENGTH_LONG).show();
                 List<Review> reviews = response.body().getResults();
                 reviewAdapter.clear();
-                for(Review review:reviews){
+                for (Review review : reviews) {
                     reviewAdapter.add(review);
                 }
             }
@@ -88,14 +107,21 @@ public class DetailActivityFragment extends Fragment {
                 Toast.makeText(getActivity(), "Throw up", Toast.LENGTH_LONG).show();
             }
         });
+    }
 
-        final List<Review> reviews = new ArrayList<>();
+    private void fetchTrailers(){
+        Call<TrailersList> trailersListCall = movieService.getMovieTrailers(movieDetail.getId());
+        trailersListCall.enqueue(new Callback<TrailersList>() {
+            @Override
+            public void onResponse(Response<TrailersList> response) {
+                List<Trailer> trailers = response.body().getYoutube();
+                // Set in trailer adapter
+            }
 
-        reviewAdapter = new ReviewAdapter(getActivity(), reviews);
-
-        ListView reviewList = (ListView) rootView.findViewById(R.id.reviewlist);
-        reviewList.setAdapter(reviewAdapter);
-
-        return rootView;
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getActivity(), "Throw up", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

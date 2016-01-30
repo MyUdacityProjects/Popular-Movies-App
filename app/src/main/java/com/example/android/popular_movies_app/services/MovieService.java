@@ -1,10 +1,9 @@
 package com.example.android.popular_movies_app.services;
 
-import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.models.ListResponse;
+import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.models.Review;
-
-import java.util.List;
+import com.example.android.popular_movies_app.models.TrailersList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -25,6 +24,6 @@ public interface MovieService {
             @Path("id") String id);
 
     @GET("3/movie/{id}/trailers?")
-    Call<List<Movie>> getMovieTrailers(
+    Call<TrailersList> getMovieTrailers(
             @Path("id") String id);
 }
