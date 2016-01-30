@@ -6,12 +6,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.android.popular_movies_app.adapters.ReviewAdapter;
+import com.example.android.popular_movies_app.models.ListResponse;
+import com.example.android.popular_movies_app.models.Movie;
+import com.example.android.popular_movies_app.models.Review;
+import com.example.android.popular_movies_app.services.MovieClient;
+import com.example.android.popular_movies_app.services.MovieService;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -35,6 +49,8 @@ public class DetailActivityFragment extends Fragment {
 
     public Movie movieDetail;
 
+    public ReviewAdapter reviewAdapter;
+
     public DetailActivityFragment() {
     }
 
@@ -54,6 +70,32 @@ public class DetailActivityFragment extends Fragment {
             Picasso.with(getContext()).load(movieDetail.getImageFullURL()).placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder).into(moviePosterImageView);
         }
+        MovieService movieService = MovieClient.createService(MovieService.class);
+        Call<ListResponse<Review>> reviewCall = movieService.getMovieReviews(movieDetail.getId());
+        reviewCall.enqueue(new Callback<ListResponse<Review>>() {
+            @Override
+            public void onResponse(Response<ListResponse<Review>> response) {
+                //Toast.makeText(getActivity(), "Yayee", Toast.LENGTH_LONG).show();
+                List<Review> reviews = response.body().getResults();
+                reviewAdapter.clear();
+                for(Review review:reviews){
+                    reviewAdapter.add(review);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getActivity(), "Throw up", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        final List<Review> reviews = new ArrayList<>();
+
+        reviewAdapter = new ReviewAdapter(getActivity(), reviews);
+
+        ListView reviewList = (ListView) rootView.findViewById(R.id.reviewlist);
+        reviewList.setAdapter(reviewAdapter);
+
         return rootView;
     }
 }

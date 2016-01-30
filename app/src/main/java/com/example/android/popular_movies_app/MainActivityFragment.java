@@ -17,8 +17,19 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.example.android.popular_movies_app.adapters.MovieAdapter;
+import com.example.android.popular_movies_app.models.Movie;
+import com.example.android.popular_movies_app.models.ListResponse;
+import com.example.android.popular_movies_app.services.MovieClient;
+import com.example.android.popular_movies_app.services.MovieService;
+import com.example.android.popular_movies_app.utils.APIConstants;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -27,6 +38,7 @@ public class MainActivityFragment extends Fragment {
 
     public MovieAdapter mMovieAdapter;
     public ProgressDialog dialog;
+    private MovieService movieService;
 
     @Override
     public void onPause() {
@@ -50,12 +62,12 @@ public class MainActivityFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_sort_popular:
                 if (isOnline()) {
-                    new FetchMovies(getActivity(), mMovieAdapter, dialog).execute(APIConstants.SORT_POPULARITY);
+                    fetchMovies(APIConstants.SORT_POPULARITY);
                 }
                 return true;
             case R.id.action_sort_rating:
                 if (isOnline()) {
-                    new FetchMovies(getActivity(), mMovieAdapter, dialog).execute(APIConstants.SORT_RATING);
+                    fetchMovies(APIConstants.SORT_RATING);
                 }
                 return true;
             default:
@@ -74,6 +86,7 @@ public class MainActivityFragment extends Fragment {
 
         GridView movieGrid = (GridView) rootView.findViewById(R.id.movie_grid);
         movieGrid.setAdapter(mMovieAdapter);
+        movieService = MovieClient.createService(MovieService.class);
 
         movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -83,10 +96,13 @@ public class MainActivityFragment extends Fragment {
                 startActivity(detailActivity);
             }
         });
+
+
         if (isOnline()) {
-            FetchMovies fetchMovies = new FetchMovies(getActivity(), mMovieAdapter, dialog);
-            fetchMovies.execute(APIConstants.SORT_POPULARITY);
+            fetchMovies(APIConstants.SORT_POPULARITY);
         }
+
+
         return rootView;
     }
 
@@ -98,6 +114,26 @@ public class MainActivityFragment extends Fragment {
             return false;
         }
         return true;
+    }
+
+    public void fetchMovies(String sort_order) {
+        Call<ListResponse<Movie>> moviesCall = movieService.getMovies(sort_order);
+
+        moviesCall.enqueue(new Callback<ListResponse<Movie>>() {
+            @Override
+            public void onResponse(Response<ListResponse<Movie>> response) {
+                List<Movie> movieList = response.body().getResults();
+                mMovieAdapter.clear();
+                for (Movie movie : movieList) {
+                    mMovieAdapter.add(movie);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getActivity(), "Shucks!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 

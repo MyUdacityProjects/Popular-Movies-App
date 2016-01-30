@@ -1,4 +1,4 @@
-package com.example.android.popular_movies_app;
+package com.example.android.popular_movies_app.utils;
 
 /**
  * APIConstants.java
@@ -7,6 +7,7 @@ package com.example.android.popular_movies_app;
  * @author Harshita Kasera
  */
 public final class APIConstants {
+    public static final String BASE_URL = "http://api.themoviedb.org/";
     public static final String OPEN_DB_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
     public static final String SORT_QUERY_PARAM = "sort_by";
     public static final String APPKEY_QUERY_PARAM = "api_key";
@@ -22,4 +23,5 @@ public final class APIConstants {
     public final static String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     public final static String IMAGE_SMALL_SIZE = "w185";
     public final static String RATING_MAX = "10";
+    public final static int MAX_CHAR_DISPLAY = 120;
 }
