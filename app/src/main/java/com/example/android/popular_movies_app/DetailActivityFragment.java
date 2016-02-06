@@ -1,16 +1,20 @@
 package com.example.android.popular_movies_app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.popular_movies_app.adapters.ReviewAdapter;
+import com.example.android.popular_movies_app.adapters.TrailerAdapter;
 import com.example.android.popular_movies_app.models.ListResponse;
 import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.models.Review;
@@ -53,6 +57,8 @@ public class DetailActivityFragment extends Fragment {
 
     public ReviewAdapter reviewAdapter;
 
+    public TrailerAdapter trailerAdapter;
+
     public MovieService movieService;
 
     public DetailActivityFragment() {
@@ -75,11 +81,26 @@ public class DetailActivityFragment extends Fragment {
                     .error(R.drawable.placeholder).into(moviePosterImageView);
         }
         final List<Review> reviews = new ArrayList<>();
+        final List<Trailer> trailers = new ArrayList<>();
 
         reviewAdapter = new ReviewAdapter(getActivity(), reviews);
+        trailerAdapter = new TrailerAdapter(getActivity(), trailers);
 
         ListView reviewList = (ListView) rootView.findViewById(R.id.reviewlist);
         reviewList.setAdapter(reviewAdapter);
+
+        ListView trailerList = (ListView) rootView.findViewById(R.id.trailerlist);
+        trailerList.setAdapter(trailerAdapter);
+
+        trailerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String youtubeVideoId = trailers.get(position).getKey();
+                String videoURI = "vnd.youtube:" + youtubeVideoId;
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(videoURI));
+                startActivity(i);
+            }
+        });
 
         movieService = MovieClient.createService(MovieService.class);
 
@@ -89,12 +110,11 @@ public class DetailActivityFragment extends Fragment {
         return rootView;
     }
 
-    private void fetchReviews(){
+    private void fetchReviews() {
         Call<ListResponse<Review>> reviewCall = movieService.getMovieReviews(movieDetail.getId());
         reviewCall.enqueue(new Callback<ListResponse<Review>>() {
             @Override
             public void onResponse(Response<ListResponse<Review>> response) {
-                //Toast.makeText(getActivity(), "Yayee", Toast.LENGTH_LONG).show();
                 List<Review> reviews = response.body().getResults();
                 reviewAdapter.clear();
                 for (Review review : reviews) {
@@ -109,13 +129,16 @@ public class DetailActivityFragment extends Fragment {
         });
     }
 
-    private void fetchTrailers(){
+    private void fetchTrailers() {
         Call<TrailersList> trailersListCall = movieService.getMovieTrailers(movieDetail.getId());
         trailersListCall.enqueue(new Callback<TrailersList>() {
             @Override
             public void onResponse(Response<TrailersList> response) {
-                List<Trailer> trailers = response.body().getYoutube();
-                // Set in trailer adapter
+                List<Trailer> trailers = response.body().getResults();
+                trailerAdapter.clear();
+                for (Trailer trailer : trailers) {
+                    trailerAdapter.add(trailer);
+                }
             }
 
             @Override

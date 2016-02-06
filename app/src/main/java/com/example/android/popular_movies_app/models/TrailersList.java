@@ -7,8 +7,8 @@ import java.util.List;
  */
 public class TrailersList {
     private String id;
-    private String quicktime;
-    private List<Trailer> youtube;
+
+    private List<Trailer> results;
 
     public String getId() {
         return id;
@@ -18,19 +18,13 @@ public class TrailersList {
         this.id = id;
     }
 
-    public String getQuicktime() {
-        return quicktime;
+    public List<Trailer> getResults() {
+        return results;
     }
 
-    public void setQuicktime(String quicktime) {
-        this.quicktime = quicktime;
+    public void setResults(List<Trailer> results) {
+        this.results = results;
     }
 
-    public List<Trailer> getYoutube() {
-        return youtube;
-    }
 
-    public void setYoutube(List<Trailer> youtube) {
-        this.youtube = youtube;
-    }
 }

@@ -16,14 +16,11 @@ import retrofit2.http.Query;
 public interface MovieService {
 
     @GET("3/discover/movie?")
-    Call<ListResponse<Movie>> getMovies(
-            @Query("sort_by") String sortBy);
+    Call<ListResponse<Movie>> getMovies(@Query("sort_by") String sortBy);
 
     @GET("3/movie/{id}/reviews?")
-    Call<ListResponse<Review>> getMovieReviews(
-            @Path("id") String id);
+    Call<ListResponse<Review>> getMovieReviews(@Path("id") String id);
 
-    @GET("3/movie/{id}/trailers?")
-    Call<TrailersList> getMovieTrailers(
-            @Path("id") String id);
+    @GET("3/movie/{id}/videos?")
+    Call<TrailersList> getMovieTrailers(@Path("id") String id);
 }

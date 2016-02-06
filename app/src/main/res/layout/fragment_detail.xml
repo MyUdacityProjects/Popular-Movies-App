@@ -96,6 +96,16 @@
                 android:text="@string/trailers"
                 android:textSize="18sp" />
 
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp">
+
+                <ListView
+                    android:id="@+id/trailerlist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"></ListView>
+            </ScrollView>
+
 
         </LinearLayout>
 

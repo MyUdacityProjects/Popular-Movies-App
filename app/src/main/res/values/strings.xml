@@ -4,6 +4,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="sort_most_popular">Sort by Most Popular</string>
     <string name="sort_rating">Sort by Rating</string>
+    <string name="sort_favourites">Sort by Favourites</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="internet_conn_msg">Please make sure you are connected to internet</string>
     <string name="loading_msg">Please wait</string>
