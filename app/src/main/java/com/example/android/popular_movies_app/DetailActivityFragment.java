@@ -1,19 +1,25 @@
 package com.example.android.popular_movies_app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.popular_movies_app.adapters.ReviewAdapter;
+import com.example.android.popular_movies_app.adapters.TrailerAdapter;
 import com.example.android.popular_movies_app.models.ListResponse;
 import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.models.Review;
+import com.example.android.popular_movies_app.models.Trailer;
+import com.example.android.popular_movies_app.models.TrailersList;
 import com.example.android.popular_movies_app.services.MovieClient;
 import com.example.android.popular_movies_app.services.MovieService;
 import com.squareup.picasso.Picasso;
@@ -51,6 +57,10 @@ public class DetailActivityFragment extends Fragment {
 
     public ReviewAdapter reviewAdapter;
 
+    public TrailerAdapter trailerAdapter;
+
+    public MovieService movieService;
+
     public DetailActivityFragment() {
     }
 
@@ -70,15 +80,44 @@ public class DetailActivityFragment extends Fragment {
             Picasso.with(getContext()).load(movieDetail.getImageFullURL()).placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder).into(moviePosterImageView);
         }
-        MovieService movieService = MovieClient.createService(MovieService.class);
+        final List<Review> reviews = new ArrayList<>();
+        final List<Trailer> trailers = new ArrayList<>();
+
+        reviewAdapter = new ReviewAdapter(getActivity(), reviews);
+        trailerAdapter = new TrailerAdapter(getActivity(), trailers);
+
+        ListView reviewList = (ListView) rootView.findViewById(R.id.reviewlist);
+        reviewList.setAdapter(reviewAdapter);
+
+        ListView trailerList = (ListView) rootView.findViewById(R.id.trailerlist);
+        trailerList.setAdapter(trailerAdapter);
+
+        trailerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String youtubeVideoId = trailers.get(position).getKey();
+                String videoURI = "vnd.youtube:" + youtubeVideoId;
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(videoURI));
+                startActivity(i);
+            }
+        });
+
+        movieService = MovieClient.createService(MovieService.class);
+
+        fetchReviews();
+        fetchTrailers();
+
+        return rootView;
+    }
+
+    private void fetchReviews() {
         Call<ListResponse<Review>> reviewCall = movieService.getMovieReviews(movieDetail.getId());
         reviewCall.enqueue(new Callback<ListResponse<Review>>() {
             @Override
             public void onResponse(Response<ListResponse<Review>> response) {
-                //Toast.makeText(getActivity(), "Yayee", Toast.LENGTH_LONG).show();
                 List<Review> reviews = response.body().getResults();
                 reviewAdapter.clear();
-                for(Review review:reviews){
+                for (Review review : reviews) {
                     reviewAdapter.add(review);
                 }
             }
@@ -88,14 +127,24 @@ public class DetailActivityFragment extends Fragment {
                 Toast.makeText(getActivity(), "Throw up", Toast.LENGTH_LONG).show();
             }
         });
+    }
 
-        final List<Review> reviews = new ArrayList<>();
+    private void fetchTrailers() {
+        Call<TrailersList> trailersListCall = movieService.getMovieTrailers(movieDetail.getId());
+        trailersListCall.enqueue(new Callback<TrailersList>() {
+            @Override
+            public void onResponse(Response<TrailersList> response) {
+                List<Trailer> trailers = response.body().getResults();
+                trailerAdapter.clear();
+                for (Trailer trailer : trailers) {
+                    trailerAdapter.add(trailer);
+                }
+            }
 
-        reviewAdapter = new ReviewAdapter(getActivity(), reviews);
-
-        ListView reviewList = (ListView) rootView.findViewById(R.id.reviewlist);
-        reviewList.setAdapter(reviewAdapter);
-
-        return rootView;
+            @Override
+            public void onFailure(Throwable t) {
+                Toast.makeText(getActivity(), "Throw up", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

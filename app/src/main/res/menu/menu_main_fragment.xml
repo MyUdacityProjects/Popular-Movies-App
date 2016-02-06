@@ -8,4 +8,8 @@
         android:id="@+id/action_sort_rating"
         android:orderInCategory="100"
         android:title="@string/sort_rating" />
+    <item
+        android:id="@+id/action_sort_favourites"
+        android:orderInCategory="100"
+        android:title="@string/sort_favourites" />
 </menu>

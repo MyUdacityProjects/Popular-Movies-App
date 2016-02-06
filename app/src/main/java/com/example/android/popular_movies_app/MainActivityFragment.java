@@ -70,6 +70,9 @@ public class MainActivityFragment extends Fragment {
                     fetchMovies(APIConstants.SORT_RATING);
                 }
                 return true;
+            case R.id.action_sort_favourites:
+                Toast.makeText(getActivity(),"Favs",Toast.LENGTH_LONG).show();
+                return true;
             default:
                 return true;
         }
