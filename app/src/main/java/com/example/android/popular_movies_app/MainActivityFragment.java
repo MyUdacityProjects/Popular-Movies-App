@@ -1,7 +1,6 @@
 package com.example.android.popular_movies_app;
 
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -19,8 +18,6 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.example.android.popular_movies_app.adapters.MovieAdapter;
-import com.example.android.popular_movies_app.db.DbUtils;
-import com.example.android.popular_movies_app.db.MovieContracts;
 import com.example.android.popular_movies_app.models.ListResponse;
 import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.services.MovieClient;
@@ -29,7 +26,6 @@ import com.example.android.popular_movies_app.utils.APIConstants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -130,17 +126,9 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onResponse(Response<ListResponse<Movie>> response) {
                 List<Movie> movieList = response.body().getResults();
-                Vector<ContentValues> movieVector = new Vector<ContentValues>(movieList.size());
                 mMovieAdapter.clear();
                 for (Movie movie : movieList) {
-                    ContentValues movieValues = DbUtils.toContentValue(movie);
-                    movieVector.add(movieValues);
                     mMovieAdapter.add(movie);
-                }
-                if (movieVector.size() > 0) {
-                    ContentValues[] movieArray = new ContentValues[movieVector.size()];
-                    movieVector.toArray(movieArray);
-                    getActivity().getContentResolver().bulkInsert(MovieContracts.FAVOURITES_TABLE.CONTENT_URI, movieArray);
                 }
             }
 

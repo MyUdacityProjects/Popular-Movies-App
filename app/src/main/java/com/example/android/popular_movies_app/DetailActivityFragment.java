@@ -1,5 +1,6 @@
 package com.example.android.popular_movies_app;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 
 import com.example.android.popular_movies_app.adapters.ReviewAdapter;
 import com.example.android.popular_movies_app.adapters.TrailerAdapter;
+import com.example.android.popular_movies_app.db.DbUtils;
+import com.example.android.popular_movies_app.db.MovieContracts;
 import com.example.android.popular_movies_app.models.ListResponse;
 import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.models.Review;
@@ -52,6 +56,9 @@ public class DetailActivityFragment extends Fragment {
 
     @Bind(R.id.movie_poster)
     ImageView moviePosterImageView;
+
+    @Bind(R.id.favorite)
+    Button favButton;
 
     public Movie movieDetail;
 
@@ -104,10 +111,22 @@ public class DetailActivityFragment extends Fragment {
 
         movieService = MovieClient.createService(MovieService.class);
 
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAsFavourite();
+            }
+        });
+
         fetchReviews();
         fetchTrailers();
 
         return rootView;
+    }
+
+    public void setAsFavourite() {
+        ContentValues contentValues = DbUtils.toContentValue(movieDetail);
+        getActivity().getContentResolver().insert(MovieContracts.MOVIES_TABLE.CONTENT_URI, contentValues);
     }
 
     private void fetchReviews() {

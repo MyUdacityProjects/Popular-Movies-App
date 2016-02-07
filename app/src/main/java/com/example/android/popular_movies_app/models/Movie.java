@@ -1,10 +1,8 @@
 package com.example.android.popular_movies_app.models;
 
-import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.android.popular_movies_app.db.MovieContracts;
 import com.example.android.popular_movies_app.utils.APIConstants;
 
 import java.text.ParseException;
