@@ -40,10 +40,7 @@ public final class MovieContracts {
         public static final String COLUMN_RELEASE_DATE = "release_date";
 
         // POPULARITY OF THE MOVIE
-        public static final String COLUMN_POPULARITY = "popularity";
-
-        // THE COUNT OF THE VOTES BY USERS GIVEN TO THE MOVIE
-        public static final String COLUMN_VOTE_COUNT = "vote_count";
+        public static final String COLUMN_VOTE_AVERAGE = "vote_average";
 
         public static String getMovieIDFromUri(Uri uri) {
             return uri.getPathSegments().get(1);

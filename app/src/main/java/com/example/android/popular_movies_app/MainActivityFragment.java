@@ -39,6 +39,7 @@ public class MainActivityFragment extends Fragment {
     public MovieAdapter mMovieAdapter;
     public ProgressDialog dialog;
     private MovieService movieService;
+    private List<Movie> movies;
 
     @Override
     public void onPause() {
@@ -71,7 +72,7 @@ public class MainActivityFragment extends Fragment {
                 }
                 return true;
             case R.id.action_sort_favourites:
-                new FetchFavouritesAsyncTask(getContext(), mMovieAdapter).execute();
+                new FetchFavouritesAsyncTask(getContext(), mMovieAdapter,movies).execute();
                 return true;
             default:
                 return true;
@@ -83,7 +84,7 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        final List<Movie> movies = new ArrayList<>();
+        movies = new ArrayList<>();
 
         mMovieAdapter = new MovieAdapter(getActivity(), movies);
 

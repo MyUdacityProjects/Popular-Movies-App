@@ -18,7 +18,7 @@ public class TestDb extends AndroidTestCase {
 
     // Since we want each test to start with a clean slate
     void deleteTheDatabase() {
-        mContext.deleteDatabase(MovieDbHelper.DATABSE_NAME);
+        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
     }
 
     /*
@@ -66,7 +66,7 @@ public class TestDb extends AndroidTestCase {
         locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_POSTER_IMAGE);
         locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_RELEASE_DATE);
         locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_TITLE);
-        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_VOTE_COUNT);
+        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_VOTE_AVERAGE);
 
         int columnNameIndex = c.getColumnIndex("name");
         do {

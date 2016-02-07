@@ -21,8 +21,7 @@ public class FetchFavouritesAsyncTask extends AsyncTask<Void, Void, List<Movie>>
             MovieContracts.MOVIES_TABLE.COLUMN_TITLE,
             MovieContracts.MOVIES_TABLE.COLUMN_OVERVIEW,
             MovieContracts.MOVIES_TABLE.COLUMN_POSTER_IMAGE,
-            MovieContracts.MOVIES_TABLE.COLUMN_VOTE_COUNT,
-            MovieContracts.MOVIES_TABLE.COLUMN_POPULARITY,
+            MovieContracts.MOVIES_TABLE.COLUMN_VOTE_AVERAGE,
             MovieContracts.MOVIES_TABLE.COLUMN_RELEASE_DATE
     };
 
@@ -33,14 +32,15 @@ public class FetchFavouritesAsyncTask extends AsyncTask<Void, Void, List<Movie>>
     public static final int COL_OVERVIEW = 2;
     public static final int COL_IMAGE = 3;
     public static final int COL_VOTE = 4;
-    public static final int COL_POULARITY = 5;
-    public static final int COL_DATE = 6;
+    public static final int COL_DATE = 5;
 
     private Context mContext;
+    private List<Movie> mMovies;
 
-    public FetchFavouritesAsyncTask(Context context, MovieAdapter movieAdapter) {
+    public FetchFavouritesAsyncTask(Context context, MovieAdapter movieAdapter, List<Movie> movies) {
         mContext = context;
         mMovieAdapter = movieAdapter;
+        mMovies = movies;
     }
 
     private List<Movie> getFavoriteMoviesDataFromCursor(Cursor cursor) {
@@ -51,8 +51,7 @@ public class FetchFavouritesAsyncTask extends AsyncTask<Void, Void, List<Movie>>
                         cursor.getString(COL_TITLE),
                         cursor.getString(COL_OVERVIEW),
                         cursor.getString(COL_IMAGE),
-                        cursor.getInt(COL_VOTE),
-                        cursor.getFloat(COL_POULARITY),
+                        cursor.getFloat(COL_VOTE),
                         cursor.getString(COL_DATE));
                 results.add(movie);
             } while (cursor.moveToNext());
@@ -78,6 +77,8 @@ public class FetchFavouritesAsyncTask extends AsyncTask<Void, Void, List<Movie>>
         if (movies != null) {
             if (mMovieAdapter != null) {
                 mMovieAdapter.clear();
+                mMovies = new ArrayList<>();
+                mMovies.addAll(movies);
                 for (Movie movie : movies) {
                     mMovieAdapter.add(movie);
                 }

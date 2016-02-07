@@ -15,8 +15,7 @@ public final class DbUtils {
         movieValues.put(MovieContracts.MOVIES_TABLE.COLUMN_OVERVIEW, movie.getOverview());
         movieValues.put(MovieContracts.MOVIES_TABLE.COLUMN_POSTER_IMAGE, movie.getPosterPath());
         movieValues.put(MovieContracts.MOVIES_TABLE.COLUMN_RELEASE_DATE, movie.getRelease_date());
-        movieValues.put(MovieContracts.MOVIES_TABLE.COLUMN_POPULARITY, movie.getPopularity());
-        movieValues.put(MovieContracts.MOVIES_TABLE.COLUMN_VOTE_COUNT, movie.getVoteCount());
+        movieValues.put(MovieContracts.MOVIES_TABLE.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
         return movieValues;
     }
 }
