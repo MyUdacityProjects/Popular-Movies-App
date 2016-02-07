@@ -26,6 +26,7 @@ import com.example.android.popular_movies_app.models.Trailer;
 import com.example.android.popular_movies_app.models.TrailersList;
 import com.example.android.popular_movies_app.services.MovieClient;
 import com.example.android.popular_movies_app.services.MovieService;
+import com.example.android.popular_movies_app.utils.APIConstants;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class DetailActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String youtubeVideoId = trailers.get(position).getKey();
-                String videoURI = "vnd.youtube:" + youtubeVideoId;
+                String videoURI = APIConstants.YOUTUBE_PREFIX + youtubeVideoId;
                 Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(videoURI));
                 startActivity(i);
             }
