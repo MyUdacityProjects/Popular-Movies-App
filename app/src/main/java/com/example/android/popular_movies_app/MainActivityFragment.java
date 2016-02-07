@@ -71,7 +71,7 @@ public class MainActivityFragment extends Fragment {
                 }
                 return true;
             case R.id.action_sort_favourites:
-                Toast.makeText(getActivity(), "Favs", Toast.LENGTH_LONG).show();
+                new FetchFavouritesAsyncTask(getContext(), mMovieAdapter).execute();
                 return true;
             default:
                 return true;
