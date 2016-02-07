@@ -2,6 +2,7 @@ package com.example.android.popular_movies_app;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -88,6 +89,16 @@ public class DetailActivityFragment extends Fragment {
             Picasso.with(getContext()).load(movieDetail.getImageFullURL()).placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder).into(moviePosterImageView);
         }
+        if (DbUtils.isFavorited(getContext(), movieDetail.getId()) != 0) {
+            favButton.setText(getString(R.string.fav_msg));
+        }else {
+            favButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setAsFavourite();
+                }
+            });
+        }
         final List<Review> reviews = new ArrayList<>();
         final List<Trailer> trailers = new ArrayList<>();
 
@@ -112,12 +123,7 @@ public class DetailActivityFragment extends Fragment {
 
         movieService = MovieClient.createService(MovieService.class);
 
-        favButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setAsFavourite();
-            }
-        });
+
 
         fetchReviews();
         fetchTrailers();
@@ -127,7 +133,13 @@ public class DetailActivityFragment extends Fragment {
 
     public void setAsFavourite() {
         ContentValues contentValues = DbUtils.toContentValue(movieDetail);
-        getActivity().getContentResolver().insert(MovieContracts.MOVIES_TABLE.CONTENT_URI, contentValues);
+        try {
+            getActivity().getContentResolver().insert(MovieContracts.MOVIES_TABLE.CONTENT_URI, contentValues);
+            Toast.makeText(getActivity(), getString(R.string.fav_msg), Toast.LENGTH_LONG).show();
+        } catch (SQLException e) {
+            Toast.makeText(getActivity(), getString(R.string.already_fav_msg), Toast.LENGTH_LONG).show();
+        }
+        favButton.setText(getString(R.string.fav_msg));
     }
 
     private void fetchReviews() {

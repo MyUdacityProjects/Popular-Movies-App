@@ -8,6 +8,8 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="internet_conn_msg">Please make sure you are connected to internet</string>
     <string name="loading_msg">Please wait</string>
+    <string name="fav_msg">Added to favourites</string>
+    <string name="already_fav_msg">Already in your favourites</string>
     <string name="movie_err_msg">Error in fetching movies</string>
     <string name="poster_img_description">Poster image of the movie</string>
     <string name="mark_favorite">Mark as favorite</string>
