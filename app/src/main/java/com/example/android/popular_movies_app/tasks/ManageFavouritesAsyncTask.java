@@ -26,7 +26,7 @@ public class ManageFavouritesAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
-        return DbUtils.isFavorited(mContext, movie.getId());
+        return DbUtils.isFavourite(mContext, movie.getId());
     }
 
 

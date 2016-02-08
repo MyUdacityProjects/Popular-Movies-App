@@ -18,7 +18,6 @@ public final class Constants {
         public final static String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
         public final static String IMAGE_SMALL_SIZE = "w185";
         public final static String RATING_MAX = "10";
-        public final static int MAX_CHAR_DISPLAY = 120;
         public final static String YOUTUBE_PREFIX = "vnd.youtube:";
     }
 }

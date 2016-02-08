@@ -35,8 +35,6 @@ public class Review {
 
     public String getContent() {
         return content;
-        //int maxLength = (content.length() < Constants.APIConstants.MAX_CHAR_DISPLAY) ? content.length() : Constants.APIConstants.MAX_CHAR_DISPLAY;
-        //return content.substring(0, maxLength).concat("...");
     }
 
 

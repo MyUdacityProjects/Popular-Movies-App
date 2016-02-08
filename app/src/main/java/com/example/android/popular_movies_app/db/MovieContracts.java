@@ -18,7 +18,7 @@ public final class MovieContracts {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
 
-        public static final Uri buildMovieUri(long id) {
+        public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -45,18 +45,5 @@ public final class MovieContracts {
         public static String getMovieIDFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
-    }
-
-    public static final class FAVOURITE_TABLE implements BaseColumns {
-        public static final String TABLE_NAME = "favourites";
-
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(TABLE_NAME).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TABLE_NAME;
-
-        // THE TITLE OF THE MOVIE
-        public static final String COLUMN_MOVIE_ID = "movie_id";
-
     }
 }

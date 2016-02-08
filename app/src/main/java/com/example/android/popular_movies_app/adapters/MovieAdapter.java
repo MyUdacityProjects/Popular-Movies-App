@@ -13,9 +13,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-/**
- * Created by harshita.k on 13/12/15.
- */
 public class MovieAdapter extends ArrayAdapter<Movie> {
 
     public MovieAdapter(Context context, List<Movie> movies) {

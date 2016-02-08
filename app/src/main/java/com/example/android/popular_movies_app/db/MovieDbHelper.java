@@ -10,11 +10,11 @@ import com.example.android.popular_movies_app.db.MovieContracts.*;
  * @author harshita.k
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
-    public static final int DATABSE_VERSION = 6;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "popularmovie.db";
 
     public MovieDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABSE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override

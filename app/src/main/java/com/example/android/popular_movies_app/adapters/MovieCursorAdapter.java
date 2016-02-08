@@ -13,9 +13,6 @@ import com.example.android.popular_movies_app.db.MovieContracts;
 import com.example.android.popular_movies_app.utils.Constants;
 import com.squareup.picasso.Picasso;
 
-/**
- * @author harshita.k
- */
 public class MovieCursorAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {

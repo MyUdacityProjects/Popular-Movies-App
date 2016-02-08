@@ -6,14 +6,11 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.android.popular_movies_app.db.MovieContracts.FAVOURITE_TABLE;
 import com.example.android.popular_movies_app.db.MovieContracts.MOVIES_TABLE;
 
-/**
- * @author harshita.k
- */
 public class MovieProvider extends ContentProvider {
 
     private static final UriMatcher uriMatcher = buildUriMatcher();
@@ -21,7 +18,6 @@ public class MovieProvider extends ContentProvider {
 
     static final int MOVIE = 100;
     static final int MOVIE_WITH_ID = 101;
-    static final int FAV = 102;
 
     static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -40,18 +36,15 @@ public class MovieProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         int match = uriMatcher.match(uri);
-        String type = "";
+        String type;
         switch (match) {
             case MOVIE:
                 type = MOVIES_TABLE.CONTENT_TYPE;
                 break;
             case MOVIE_WITH_ID:
                 type = MOVIES_TABLE.CONTENT_ITEM_TYPE;
-                break;
-            case FAV:
-                type = FAVOURITE_TABLE.CONTENT_TYPE;
                 break;
             default:
                 throw new UnsupportedOperationException();
@@ -67,8 +60,8 @@ public class MovieProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Cursor retCursor = null;
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Cursor retCursor;
         int match = uriMatcher.match(uri);
         switch (match) {
             case MOVIE:
@@ -97,13 +90,15 @@ public class MovieProvider extends ContentProvider {
                 throw new UnsupportedOperationException();
 
         }
-        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if (getContext() != null && getContext().getContentResolver() != null) {
+            retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
         return retCursor;
     }
 
     @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         Uri returnUri;
         int match = uriMatcher.match(uri);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -125,7 +120,7 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         int rowsDeleted;
         int match = uriMatcher.match(uri);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -140,14 +135,16 @@ public class MovieProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         if (rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            if (getContext() != null && getContext().getContentResolver() != null) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
         }
         db.close();
         return rowsDeleted;
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int rowsUpdated;
         int match = uriMatcher.match(uri);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -159,7 +156,9 @@ public class MovieProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         if (rowsUpdated != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            if (getContext() != null && getContext().getContentResolver() != null) {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }
         }
         db.close();
         return rowsUpdated;

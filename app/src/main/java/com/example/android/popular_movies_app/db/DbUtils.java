@@ -6,9 +6,7 @@ import android.database.Cursor;
 
 import com.example.android.popular_movies_app.models.Movie;
 
-/**
- * @author harshita.k
- */
+
 public final class DbUtils {
     public static ContentValues toContentValue(Movie movie) {
         ContentValues movieValues = new ContentValues();
@@ -21,7 +19,7 @@ public final class DbUtils {
         return movieValues;
     }
 
-    public static boolean isFavorited(Context context, String id) {
+    public static boolean isFavourite(Context context, String id) {
         Cursor cursor = context.getContentResolver().query(
                 MovieContracts.MOVIES_TABLE.CONTENT_URI,
                 null,   // projection
@@ -29,10 +27,10 @@ public final class DbUtils {
                 new String[]{id},   // selectionArgs
                 null    // sort order
         );
-        int numRows = cursor.getCount();
-        cursor.close();
-        if (numRows > 0) {
-            return true;
+        if (cursor != null) {
+            int numRows = cursor.getCount();
+            cursor.close();
+            return (numRows > 0);
         }
         return false;
     }

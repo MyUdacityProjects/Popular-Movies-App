@@ -12,9 +12,6 @@ import com.example.android.popular_movies_app.models.Review;
 
 import java.util.List;
 
-/**
- * @author harshita.k
- */
 public class ReviewAdapter extends ArrayAdapter<Review> {
 
     public ReviewAdapter(Context context, List<Review> reviews) {
