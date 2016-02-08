@@ -31,7 +31,7 @@ public class MovieClient {
                 Request original = chain.request();
                 HttpUrl url = original.url()
                         .newBuilder()
-                        .addQueryParameter(APIConstants.APPKEY_QUERY_PARAM, BuildConfig.THE_MOVIEDB_API_KEY)
+                        .addQueryParameter(APIConstants.APP_KEY_QUERY_PARAM, BuildConfig.THE_MOVIEDB_API_KEY)
                         .build();
                 Request request = original.newBuilder().url(url).build();
                 return chain.proceed(request);

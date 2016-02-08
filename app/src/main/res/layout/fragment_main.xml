@@ -9,6 +9,7 @@
         android:id="@+id/movie_grid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:columnWidth="@dimen/grid_item_movie_width"
         android:horizontalSpacing="0dp"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"

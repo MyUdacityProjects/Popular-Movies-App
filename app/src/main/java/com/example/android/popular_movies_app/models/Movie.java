@@ -1,10 +1,8 @@
 package com.example.android.popular_movies_app.models;
 
-import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.android.popular_movies_app.db.MovieContracts;
 import com.example.android.popular_movies_app.utils.APIConstants;
 
 import java.text.ParseException;
@@ -50,6 +48,15 @@ public class Movie implements Parcelable {
 
     public String getOverview() {
         return overview;
+    }
+
+    public Movie(String id, String title, String overview, String poster_path, Float vote_average, String release_date) {
+        this.poster_path = poster_path;
+        this.overview = overview;
+        this.id = id;
+        this.title = title;
+        this.vote_average = vote_average;
+        this.release_date = release_date;
     }
 
     public void setOverview(String overview) {
@@ -158,9 +165,6 @@ public class Movie implements Parcelable {
         overview = in.readString();
         release_date = in.readString();
         original_title = in.readString();
-        backdrop_path = in.readString();
-        popularity = in.readFloat();
-        vote_count = in.readInt();
         vote_average = in.readFloat();
         id = in.readString();
     }
@@ -171,9 +175,6 @@ public class Movie implements Parcelable {
         dest.writeString(overview);
         dest.writeString(release_date);
         dest.writeString(original_title);
-        dest.writeString(backdrop_path);
-        dest.writeFloat(popularity);
-        dest.writeInt(vote_count);
         dest.writeFloat(vote_average);
         dest.writeString(id);
     }

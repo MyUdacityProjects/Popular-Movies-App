@@ -1,6 +1,8 @@
 package com.example.android.popular_movies_app;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -15,6 +18,8 @@ import android.widget.Toast;
 
 import com.example.android.popular_movies_app.adapters.ReviewAdapter;
 import com.example.android.popular_movies_app.adapters.TrailerAdapter;
+import com.example.android.popular_movies_app.db.DbUtils;
+import com.example.android.popular_movies_app.db.MovieContracts;
 import com.example.android.popular_movies_app.models.ListResponse;
 import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.models.Review;
@@ -22,6 +27,7 @@ import com.example.android.popular_movies_app.models.Trailer;
 import com.example.android.popular_movies_app.models.TrailersList;
 import com.example.android.popular_movies_app.services.MovieClient;
 import com.example.android.popular_movies_app.services.MovieService;
+import com.example.android.popular_movies_app.utils.APIConstants;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -53,6 +59,9 @@ public class DetailActivityFragment extends Fragment {
     @Bind(R.id.movie_poster)
     ImageView moviePosterImageView;
 
+    @Bind(R.id.favorite)
+    Button favButton;
+
     public Movie movieDetail;
 
     public ReviewAdapter reviewAdapter;
@@ -60,6 +69,7 @@ public class DetailActivityFragment extends Fragment {
     public TrailerAdapter trailerAdapter;
 
     public MovieService movieService;
+
 
     public DetailActivityFragment() {
     }
@@ -70,8 +80,15 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         ButterKnife.bind(this, rootView);
+        Bundle args = getArguments();
 
-        movieDetail = getActivity().getIntent().getExtras().getParcelable("MOVIE");
+
+        if (args == null) {
+            rootView.setVisibility(View.INVISIBLE);
+            return rootView;
+        }
+        rootView.setVisibility(View.VISIBLE);
+        movieDetail = args.getParcelable("MOVIE");
         if (movieDetail != null) {
             movieTitleTextView.setText(movieDetail.getOriginalTitle());
             movieOverviewTextView.setText(movieDetail.getOverview());
@@ -79,6 +96,16 @@ public class DetailActivityFragment extends Fragment {
             movieReleaseDateTextView.setText(movieDetail.getMovieReleaseDate());
             Picasso.with(getContext()).load(movieDetail.getImageFullURL()).placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder).into(moviePosterImageView);
+        }
+        if (DbUtils.isFavorited(getContext(), movieDetail.getId()) != 0) {
+            favButton.setText(getString(R.string.fav_msg));
+        } else {
+            favButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setAsFavourite();
+                }
+            });
         }
         final List<Review> reviews = new ArrayList<>();
         final List<Trailer> trailers = new ArrayList<>();
@@ -96,7 +123,7 @@ public class DetailActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String youtubeVideoId = trailers.get(position).getKey();
-                String videoURI = "vnd.youtube:" + youtubeVideoId;
+                String videoURI = APIConstants.YOUTUBE_PREFIX + youtubeVideoId;
                 Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(videoURI));
                 startActivity(i);
             }
@@ -104,10 +131,22 @@ public class DetailActivityFragment extends Fragment {
 
         movieService = MovieClient.createService(MovieService.class);
 
+
         fetchReviews();
         fetchTrailers();
 
         return rootView;
+    }
+
+    public void setAsFavourite() {
+        ContentValues contentValues = DbUtils.toContentValue(movieDetail);
+        try {
+            getActivity().getContentResolver().insert(MovieContracts.MOVIES_TABLE.CONTENT_URI, contentValues);
+            Toast.makeText(getActivity(), getString(R.string.fav_msg), Toast.LENGTH_LONG).show();
+        } catch (SQLException e) {
+            Toast.makeText(getActivity(), getString(R.string.already_fav_msg), Toast.LENGTH_LONG).show();
+        }
+        favButton.setText(getString(R.string.fav_msg));
     }
 
     private void fetchReviews() {

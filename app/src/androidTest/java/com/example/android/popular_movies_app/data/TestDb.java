@@ -18,7 +18,7 @@ public class TestDb extends AndroidTestCase {
 
     // Since we want each test to start with a clean slate
     void deleteTheDatabase() {
-        mContext.deleteDatabase(MovieDbHelper.DATABSE_NAME);
+        mContext.deleteDatabase(MovieDbHelper.DATABASE_NAME);
     }
 
     /*
@@ -34,7 +34,7 @@ public class TestDb extends AndroidTestCase {
                 this.mContext).getWritableDatabase();
 
         final HashSet<String> tableNameHashSet = new HashSet<String>();
-        tableNameHashSet.add(MovieContracts.FAVOURITES_TABLE.TABLE_NAME);
+        tableNameHashSet.add(MovieContracts.MOVIES_TABLE.TABLE_NAME);
 
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
 
@@ -52,7 +52,7 @@ public class TestDb extends AndroidTestCase {
                 tableNameHashSet.isEmpty());
 
         // now, do our tables contain the correct columns?
-        c = db.rawQuery("PRAGMA table_info(" + MovieContracts.FAVOURITES_TABLE.TABLE_NAME + ")",
+        c = db.rawQuery("PRAGMA table_info(" + MovieContracts.MOVIES_TABLE.TABLE_NAME + ")",
                 null);
 
         assertTrue("Error: This means that we were unable to query the database for table information.",
@@ -60,13 +60,13 @@ public class TestDb extends AndroidTestCase {
 
         // Build a HashSet of all of the column names we want to look for
         final HashSet<String> locationColumnHashSet = new HashSet<String>();
-        locationColumnHashSet.add(MovieContracts.FAVOURITES_TABLE._ID);
-        locationColumnHashSet.add(MovieContracts.FAVOURITES_TABLE.COLUMN_OVERVIEW);
-        locationColumnHashSet.add(MovieContracts.FAVOURITES_TABLE.COLUMN_POPULARITY);
-        locationColumnHashSet.add(MovieContracts.FAVOURITES_TABLE.COLUMN_POSTER_IMAGE);
-        locationColumnHashSet.add(MovieContracts.FAVOURITES_TABLE.COLUMN_RELEASE_DATE);
-        locationColumnHashSet.add(MovieContracts.FAVOURITES_TABLE.COLUMN_TITLE);
-        locationColumnHashSet.add(MovieContracts.FAVOURITES_TABLE.COLUMN_VOTE_COUNT);
+        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE._ID);
+        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_OVERVIEW);
+        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_POPULARITY);
+        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_POSTER_IMAGE);
+        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_RELEASE_DATE);
+        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_TITLE);
+        locationColumnHashSet.add(MovieContracts.MOVIES_TABLE.COLUMN_VOTE_AVERAGE);
 
         int columnNameIndex = c.getColumnIndex("name");
         do {
@@ -86,10 +86,10 @@ public class TestDb extends AndroidTestCase {
                 this.mContext).getWritableDatabase();
         ContentValues movieContentValue = DbUtils.createMovieData();
         long movieId;
-        movieId = db.insert(MovieContracts.FAVOURITES_TABLE.TABLE_NAME, null, movieContentValue);
+        movieId = db.insert(MovieContracts.MOVIES_TABLE.TABLE_NAME, null, movieContentValue);
         assertTrue("Error : Failed to insert the movie", movieId != -1);
 
-        Cursor cursor = db.query(MovieContracts.FAVOURITES_TABLE.TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursor = db.query(MovieContracts.MOVIES_TABLE.TABLE_NAME, null, null, null, null, null, null);
 
         assertTrue("Error: No Records returned from movie query", cursor.moveToFirst());
 
