@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.android.popular_movies_app.models.Movie;
+import com.example.android.popular_movies_app.utils.Constants;
 
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.BunldeCallback {
 
@@ -15,8 +16,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
         if (findViewById(R.id.movie_detail_container) != null) {
             mTwoPane = true;
             if (savedInstanceState == null) {
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     public void onItemSelected(Movie movie) {
         if (mTwoPane) {
             Bundle arguments = new Bundle();
-            arguments.putParcelable("MOVIE", movie);
+            arguments.putParcelable(Constants.MOVIE_TAG, movie);
 
             DetailActivityFragment fragment = new DetailActivityFragment();
             fragment.setArguments(arguments);
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
                     .commit();
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
-                    .putExtra("MOVIE", movie);
+                    .putExtra(Constants.MOVIE_TAG, movie);
             startActivity(intent);
         }
     }

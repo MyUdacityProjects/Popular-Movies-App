@@ -3,7 +3,7 @@ package com.example.android.popular_movies_app.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.android.popular_movies_app.utils.APIConstants;
+import com.example.android.popular_movies_app.utils.Constants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,11 +50,11 @@ public class Movie implements Parcelable {
         return overview;
     }
 
-    public Movie(String id, String title, String overview, String poster_path, Float vote_average, String release_date) {
+    public Movie(String id, String original_title, String overview, String poster_path, Float vote_average, String release_date) {
         this.poster_path = poster_path;
         this.overview = overview;
         this.id = id;
-        this.title = title;
+        this.original_title = original_title;
         this.vote_average = vote_average;
         this.release_date = release_date;
     }
@@ -152,7 +152,7 @@ public class Movie implements Parcelable {
     }
 
     public String getImageFullURL() {
-        return APIConstants.IMAGE_BASE_URL + APIConstants.IMAGE_SMALL_SIZE + getPosterPath();
+        return Constants.APIConstants.IMAGE_BASE_URL + Constants.APIConstants.IMAGE_SMALL_SIZE + getPosterPath();
     }
 
     @Override
@@ -191,7 +191,7 @@ public class Movie implements Parcelable {
     };
 
     public String getRating() {
-        return getVoteAverage() + "/" + APIConstants.RATING_MAX;
+        return getVoteAverage() + "/" + Constants.APIConstants.RATING_MAX;
     }
 
     public String getMovieReleaseDate() {

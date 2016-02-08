@@ -10,7 +10,7 @@ import android.widget.ImageView;
 
 import com.example.android.popular_movies_app.R;
 import com.example.android.popular_movies_app.db.MovieContracts;
-import com.example.android.popular_movies_app.utils.APIConstants;
+import com.example.android.popular_movies_app.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -30,7 +30,7 @@ public class MovieCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ImageView moviePoster = (ImageView) view.findViewById(R.id.movie_poster);
-        String posterURL = APIConstants.IMAGE_BASE_URL + APIConstants.IMAGE_SMALL_SIZE + getMoviePosterFromCursor(cursor);
+        String posterURL = Constants.APIConstants.IMAGE_BASE_URL + Constants.APIConstants.IMAGE_SMALL_SIZE + getMoviePosterFromCursor(cursor);
         Picasso.with(context).load(posterURL).placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder).into(moviePoster);
         return;

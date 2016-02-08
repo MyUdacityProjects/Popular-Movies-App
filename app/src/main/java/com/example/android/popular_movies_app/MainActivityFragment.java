@@ -21,7 +21,8 @@ import com.example.android.popular_movies_app.models.ListResponse;
 import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.services.MovieClient;
 import com.example.android.popular_movies_app.services.MovieService;
-import com.example.android.popular_movies_app.utils.APIConstants;
+import com.example.android.popular_movies_app.tasks.FetchFavouritesAsyncTask;
+import com.example.android.popular_movies_app.utils.Constants.APIConstants;
 
 import java.util.ArrayList;
 import java.util.List;

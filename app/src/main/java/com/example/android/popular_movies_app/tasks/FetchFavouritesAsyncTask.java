@@ -1,4 +1,4 @@
-package com.example.android.popular_movies_app;
+package com.example.android.popular_movies_app.tasks;
 
 import android.content.Context;
 import android.database.Cursor;

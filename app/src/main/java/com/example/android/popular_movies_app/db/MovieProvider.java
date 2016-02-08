@@ -113,7 +113,8 @@ public class MovieProvider extends ContentProvider {
                 if (movieId != -1) {
                     returnUri = MOVIES_TABLE.buildMovieUri(movieId);
                 } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    returnUri = null;
+                    //throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
             default:

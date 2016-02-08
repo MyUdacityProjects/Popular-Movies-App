@@ -1,8 +1,6 @@
 package com.example.android.popular_movies_app;
 
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,8 +16,6 @@ import android.widget.Toast;
 
 import com.example.android.popular_movies_app.adapters.ReviewAdapter;
 import com.example.android.popular_movies_app.adapters.TrailerAdapter;
-import com.example.android.popular_movies_app.db.DbUtils;
-import com.example.android.popular_movies_app.db.MovieContracts;
 import com.example.android.popular_movies_app.models.ListResponse;
 import com.example.android.popular_movies_app.models.Movie;
 import com.example.android.popular_movies_app.models.Review;
@@ -27,7 +23,8 @@ import com.example.android.popular_movies_app.models.Trailer;
 import com.example.android.popular_movies_app.models.TrailersList;
 import com.example.android.popular_movies_app.services.MovieClient;
 import com.example.android.popular_movies_app.services.MovieService;
-import com.example.android.popular_movies_app.utils.APIConstants;
+import com.example.android.popular_movies_app.tasks.ManageFavouritesAsyncTask;
+import com.example.android.popular_movies_app.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -88,7 +85,7 @@ public class DetailActivityFragment extends Fragment {
             return rootView;
         }
         rootView.setVisibility(View.VISIBLE);
-        movieDetail = args.getParcelable("MOVIE");
+        movieDetail = args.getParcelable(Constants.MOVIE_TAG);
         if (movieDetail != null) {
             movieTitleTextView.setText(movieDetail.getOriginalTitle());
             movieOverviewTextView.setText(movieDetail.getOverview());
@@ -97,16 +94,14 @@ public class DetailActivityFragment extends Fragment {
             Picasso.with(getContext()).load(movieDetail.getImageFullURL()).placeholder(R.drawable.placeholder)
                     .error(R.drawable.placeholder).into(moviePosterImageView);
         }
-        if (DbUtils.isFavorited(getContext(), movieDetail.getId()) != 0) {
-            favButton.setText(getString(R.string.fav_msg));
-        } else {
-            favButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    setAsFavourite();
-                }
-            });
-        }
+        new ManageFavouritesAsyncTask(getActivity(), movieDetail, false, favButton).execute();
+
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ManageFavouritesAsyncTask(getActivity(), movieDetail,true, favButton).execute();
+            }
+        });
         final List<Review> reviews = new ArrayList<>();
         final List<Trailer> trailers = new ArrayList<>();
 
@@ -123,7 +118,7 @@ public class DetailActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String youtubeVideoId = trailers.get(position).getKey();
-                String videoURI = APIConstants.YOUTUBE_PREFIX + youtubeVideoId;
+                String videoURI = Constants.APIConstants.YOUTUBE_PREFIX + youtubeVideoId;
                 Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(videoURI));
                 startActivity(i);
             }
@@ -138,16 +133,6 @@ public class DetailActivityFragment extends Fragment {
         return rootView;
     }
 
-    public void setAsFavourite() {
-        ContentValues contentValues = DbUtils.toContentValue(movieDetail);
-        try {
-            getActivity().getContentResolver().insert(MovieContracts.MOVIES_TABLE.CONTENT_URI, contentValues);
-            Toast.makeText(getActivity(), getString(R.string.fav_msg), Toast.LENGTH_LONG).show();
-        } catch (SQLException e) {
-            Toast.makeText(getActivity(), getString(R.string.already_fav_msg), Toast.LENGTH_LONG).show();
-        }
-        favButton.setText(getString(R.string.fav_msg));
-    }
 
     private void fetchReviews() {
         Call<ListResponse<Review>> reviewCall = movieService.getMovieReviews(movieDetail.getId());

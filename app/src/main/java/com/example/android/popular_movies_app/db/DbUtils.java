@@ -21,7 +21,7 @@ public final class DbUtils {
         return movieValues;
     }
 
-    public static int isFavorited(Context context, String id) {
+    public static boolean isFavorited(Context context, String id) {
         Cursor cursor = context.getContentResolver().query(
                 MovieContracts.MOVIES_TABLE.CONTENT_URI,
                 null,   // projection
@@ -31,7 +31,10 @@ public final class DbUtils {
         );
         int numRows = cursor.getCount();
         cursor.close();
-        return numRows;
+        if (numRows > 0) {
+            return true;
+        }
+        return false;
     }
 
 }

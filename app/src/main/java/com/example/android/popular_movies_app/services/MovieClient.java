@@ -1,7 +1,8 @@
 package com.example.android.popular_movies_app.services;
 
 import com.example.android.popular_movies_app.BuildConfig;
-import com.example.android.popular_movies_app.utils.APIConstants;
+import com.example.android.popular_movies_app.utils.Constants;
+import com.example.android.popular_movies_app.utils.Constants.APIConstants;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ import retrofit2.Retrofit;
 public class MovieClient {
 
     public static Retrofit.Builder builder = new Retrofit.Builder()
-            .baseUrl(APIConstants.BASE_URL)
+            .baseUrl(Constants.APIConstants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create());
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();

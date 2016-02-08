@@ -1,7 +1,5 @@
 package com.example.android.popular_movies_app.models;
 
-import com.example.android.popular_movies_app.utils.APIConstants;
-
 /**
  * @author harshita.k
  */
@@ -36,8 +34,9 @@ public class Review {
     }
 
     public String getContent() {
-        int maxLength = (content.length() < APIConstants.MAX_CHAR_DISPLAY) ? content.length() : APIConstants.MAX_CHAR_DISPLAY;
-        return content.substring(0, maxLength).concat("...");
+        return content;
+        //int maxLength = (content.length() < Constants.APIConstants.MAX_CHAR_DISPLAY) ? content.length() : Constants.APIConstants.MAX_CHAR_DISPLAY;
+        //return content.substring(0, maxLength).concat("...");
     }
 
 
