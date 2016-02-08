@@ -70,6 +70,7 @@ public class DetailActivityFragment extends Fragment {
 
     public MovieService movieService;
 
+
     public DetailActivityFragment() {
     }
 
@@ -79,8 +80,15 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         ButterKnife.bind(this, rootView);
+        Bundle args = getArguments();
 
-        movieDetail = getActivity().getIntent().getExtras().getParcelable("MOVIE");
+
+        if (args == null) {
+            rootView.setVisibility(View.INVISIBLE);
+            return rootView;
+        }
+        rootView.setVisibility(View.VISIBLE);
+        movieDetail = args.getParcelable("MOVIE");
         if (movieDetail != null) {
             movieTitleTextView.setText(movieDetail.getOriginalTitle());
             movieOverviewTextView.setText(movieDetail.getOverview());
@@ -91,7 +99,7 @@ public class DetailActivityFragment extends Fragment {
         }
         if (DbUtils.isFavorited(getContext(), movieDetail.getId()) != 0) {
             favButton.setText(getString(R.string.fav_msg));
-        }else {
+        } else {
             favButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -122,7 +130,6 @@ public class DetailActivityFragment extends Fragment {
         });
 
         movieService = MovieClient.createService(MovieService.class);
-
 
 
         fetchReviews();

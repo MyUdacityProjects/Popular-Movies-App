@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_sort_popular"
-        android:orderInCategory="100"
-        android:title="@string/sort_most_popular" />
-    <item
-        android:id="@+id/action_sort_rating"
-        android:orderInCategory="100"
-        android:title="@string/sort_rating" />
-    <item
-        android:id="@+id/action_sort_favourites"
-        android:orderInCategory="100"
-        android:title="@string/sort_favourites" />
+        android:id="@+id/action_sort_by"
+        android:title="@string/sort_by"
+        app:showAsAction="ifRoom">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_sort_popular"
+                    android:title="@string/sort_most_popular" />
+                <item
+                    android:id="@+id/action_sort_rating"
+                    android:title="@string/sort_rating" />
+                <item
+                    android:id="@+id/action_sort_favourites"
+                    android:title="@string/sort_favourites" />
+            </group>
+        </menu>
+    </item>
 </menu>

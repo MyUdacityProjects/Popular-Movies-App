@@ -2,7 +2,6 @@ package com.example.android.popular_movies_app;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -40,6 +39,18 @@ public class MainActivityFragment extends Fragment {
     public ProgressDialog dialog;
     private MovieService movieService;
     private List<Movie> movies;
+    private String mSortCriteria = APIConstants.SORT_POPULARITY;
+    private MenuItem mMenuItemSortPopular;
+    private MenuItem mMenuItemSortRating;
+    private MenuItem mMenuItemSortFav;
+
+    public MainActivityFragment() {
+        setHasOptionsMenu(true);
+    }
+
+    public interface BunldeCallback {
+        void onItemSelected(Movie movie);
+    }
 
     @Override
     public void onPause() {
@@ -47,15 +58,31 @@ public class MainActivityFragment extends Fragment {
         dialog = null;
     }
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_main_fragment, menu);
+
+        mMenuItemSortPopular = menu.findItem(R.id.action_sort_popular);
+        mMenuItemSortRating = menu.findItem(R.id.action_sort_rating);
+        mMenuItemSortFav = menu.findItem(R.id.action_sort_favourites);
+
+        if (mSortCriteria.contentEquals(APIConstants.SORT_POPULARITY)) {
+            if (!mMenuItemSortPopular.isChecked()) {
+                mMenuItemSortPopular.setChecked(true);
+            }
+        } else if (mSortCriteria.contentEquals(APIConstants.SORT_RATING)) {
+            if (!mMenuItemSortRating.isChecked()) {
+                mMenuItemSortRating.setChecked(true);
+            }
+        } else if (mSortCriteria.contentEquals(APIConstants.SORT_FAV)) {
+            if (!mMenuItemSortFav.isChecked()) {
+                mMenuItemSortFav.setChecked(true);
+            }
+        }
     }
 
-    public MainActivityFragment() {
-        setHasOptionsMenu(true);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -63,16 +90,28 @@ public class MainActivityFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_sort_popular:
                 if (isOnline()) {
-                    fetchMovies(APIConstants.SORT_POPULARITY);
+                    mSortCriteria = APIConstants.SORT_POPULARITY;
+                    fetchMovies(mSortCriteria);
+                    if (!mMenuItemSortPopular.isChecked()) {
+                        mMenuItemSortPopular.setChecked(true);
+                    }
                 }
                 return true;
             case R.id.action_sort_rating:
                 if (isOnline()) {
-                    fetchMovies(APIConstants.SORT_RATING);
+                    mSortCriteria = APIConstants.SORT_RATING;
+                    fetchMovies(mSortCriteria);
+                    if (!mMenuItemSortRating.isChecked()) {
+                        mMenuItemSortRating.setChecked(true);
+                    }
                 }
                 return true;
             case R.id.action_sort_favourites:
-                new FetchFavouritesAsyncTask(getContext(), mMovieAdapter,movies).execute();
+                mSortCriteria = APIConstants.SORT_FAV;
+                if (!mMenuItemSortFav.isChecked()) {
+                    mMenuItemSortFav.setChecked(true);
+                }
+                new FetchFavouritesAsyncTask(getContext(), mMovieAdapter, movies).execute();
                 return true;
             default:
                 return true;
@@ -95,9 +134,7 @@ public class MainActivityFragment extends Fragment {
         movieGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent detailActivity = new Intent(getActivity(), DetailActivity.class);
-                detailActivity.putExtra("MOVIE", movies.get(position));
-                startActivity(detailActivity);
+                ((BunldeCallback) getActivity()).onItemSelected(movies.get(position));
             }
         });
 
@@ -135,7 +172,7 @@ public class MainActivityFragment extends Fragment {
 
             @Override
             public void onFailure(Throwable t) {
-                Toast.makeText(getActivity(), "Shucks!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.internet_conn_msg), Toast.LENGTH_SHORT).show();
             }
         });
     }
