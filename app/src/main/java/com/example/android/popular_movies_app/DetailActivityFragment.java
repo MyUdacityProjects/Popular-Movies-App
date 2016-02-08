@@ -108,10 +108,10 @@ public class DetailActivityFragment extends Fragment {
         reviewAdapter = new ReviewAdapter(getActivity(), reviews);
         trailerAdapter = new TrailerAdapter(getActivity(), trailers);
 
-        ListView reviewList = (ListView) rootView.findViewById(R.id.reviewlist);
+        ListView reviewList = (ListView) rootView.findViewById(R.id.review_list);
         reviewList.setAdapter(reviewAdapter);
 
-        ListView trailerList = (ListView) rootView.findViewById(R.id.trailerlist);
+        ListView trailerList = (ListView) rootView.findViewById(R.id.trailer_list);
         trailerList.setAdapter(trailerAdapter);
 
         trailerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
